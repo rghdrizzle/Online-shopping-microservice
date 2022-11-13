@@ -1,2 +1,6 @@
-# Online-shopping-microservice
-Online shopping microservice application used to implement devops practices 
+
+**Online Boutique** is a cloud-first microservices demo application.
+Online Boutique consists of an 11-tier microservices application. The application is a
+web-based e-commerce app where users can browse items,
+add them to the cart, and purchase them.
+
