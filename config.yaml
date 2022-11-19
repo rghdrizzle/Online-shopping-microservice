@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   name: adservice
 spec:
+  replicas: 2
   selector:
     matchLabels:
       app: adservice
@@ -23,7 +24,14 @@ spec:
         env:
         - name: PORT
           value: "9555"
-
+        livenessProbe:
+          periodSeconds: 10
+          exec:
+            command: ["/bin/grcp_health_probe","-addr:9555"]
+        readinessProbe:
+          periodSeconds: 5
+          exec:
+            command: [/bin/grcp_health_probe","-addr:9555"]
 ---
 
 apiVersion: v1
@@ -45,6 +53,7 @@ kind: Deployment
 metadata:
   name: emailservice
 spec:
+  replicas: 2
   selector:
     matchLabels:
       app: emailservice
@@ -65,6 +74,18 @@ spec:
         env:
         - name: PORT
           value: "8080"
+        - name: DISABLE_TRACING
+          value: "1"
+        - name: DISABLE_PROFILER
+          value: "1"
+        livenessProbe:
+          periodSeconds: 10
+          exec:
+            command: ["/bin/grcp_health_probe","-addr:8080"]
+        readinessProbe:
+          periodSeconds: 5
+          exec:
+            command: [/bin/grcp_health_probe","-addr:8080"]
 
 ---
 
@@ -87,6 +108,7 @@ kind: Deployment
 metadata:
   name: recommendationservice
 spec:
+  replicas: 2
   selector:
     matchLabels:
       app: recommendationservice
@@ -109,6 +131,20 @@ spec:
           value: "8080"
         - name: PRODUCT_CATALOG_SERVICE_ADDR
           value: "productcatalogservice:3550"
+        - name: DISABLE_TRACING
+          value: "1"
+        - name: DISABLE_PROFILER
+          value: "1"
+        - name: DISABLE_DEBUGGER
+          value: "1"
+        livenessProbe:
+          periodSeconds: 10
+          exec:
+            command: ["/bin/grcp_health_probe","-addr:8080"]
+        readinessProbe:
+          periodSeconds: 5
+          exec:
+            command: [/bin/grcp_health_probe","-addr:8080"]
 
 ---
 
@@ -131,6 +167,7 @@ kind: Deployment
 metadata:
   name: productcatalogservice
 spec:
+  replicas: 2
   selector:
     matchLabels:
       app: productcatalogservice
@@ -151,6 +188,14 @@ spec:
         env:
         - name: PORT
           value: "3550"
+        livenessProbe:
+          periodSeconds: 10
+          exec:
+            command: ["/bin/grcp_health_probe","-addr:3550"]
+        readinessProbe:
+          periodSeconds: 5
+          exec:
+            command: [/bin/grcp_health_probe","-addr:3550"]
 
 ---
 
@@ -172,6 +217,7 @@ kind: Deployment
 metadata:
   name: paymentservice
 spec:
+  replicas: 2
   selector:
     matchLabels:
       app: paymentservice
@@ -192,6 +238,14 @@ spec:
         env:
         - name: PORT
           value: "50051"
+        livenessProbe:
+          periodSeconds: 10
+          exec:
+            command: ["/bin/grcp_health_probe","-addr:50051"]
+        readinessProbe:
+          periodSeconds: 5
+          exec:
+            command: [/bin/grcp_health_probe","-addr:50051"]
 
 ---
 
@@ -212,6 +266,7 @@ kind: Deployment
 metadata:
   name: shippingservice
 spec:
+  replicas: 2
   selector:
     matchLabels:
       app: shippingservice
@@ -232,6 +287,14 @@ spec:
         env:
         - name: PORT
           value: "50051"
+        livenessProbe:
+          periodSeconds: 10
+          exec:
+            command: ["/bin/grcp_health_probe","-addr:9555"]
+        readinessProbe:
+          periodSeconds: 5
+          exec:
+            command: [/bin/grcp_health_probe","-addr:9555"]
 
 ---
 
@@ -254,6 +317,7 @@ kind: Deployment
 metadata:
   name: currencyservice
 spec:
+  replicas: 2
   selector:
     matchLabels:
       app: currencyservice
@@ -274,6 +338,15 @@ spec:
         env:
         - name: PORT
           value: "7000"
+        livenessProbe:
+          periodSeconds: 10
+          exec:
+            command: ["/bin/grcp_health_probe","-addr:7000"]
+        readinessProbe:
+          periodSeconds: 5
+          exec:
+            command: [/bin/grcp_health_probe","-addr:7000"]
+        
 
 ---
 
@@ -296,6 +369,7 @@ kind: Deployment
 metadata:
   name: checkoutservice
 spec:
+  replicas: 2
   selector:
     matchLabels:
       app: checkoutservice
@@ -321,13 +395,21 @@ spec:
           - name: PRODUCT_CATALOG_SERVICE_ADDR
             value: "productcatalogservice:3550"
           - name: CART_SERVICE_ADDR
-            value: "catservice:7070"
+            value: "cartservice:7070"
           - name: CURRENCY_SERVICE_ADDR
             value: "currencyservice:7000"
           - name: EMAIL_SERVICE_ADDR
             value: "emailservice:8080"
           - name: PAYMENT_SERVICE_ADDR
             value: "paymentservice:50051"
+        livenessProbe:
+          periodSeconds: 10
+          exec:
+            command: ["/bin/grcp_health_probe","-addr:5050"]
+        readinessProbe:
+          periodSeconds: 5
+          exec:
+            command: [/bin/grcp_health_probe","-addr:5050"]
 ---
 
 apiVersion: v1
@@ -349,6 +431,7 @@ kind: Deployment
 metadata:
   name: cartservice
 spec:
+  replicas: 2
   selector:
     matchLabels:
       app: cartservice
@@ -371,6 +454,14 @@ spec:
             value: "7070"
           - name: REDIS_ADDR
             value: "redis-cart:6379"
+        livenessProbe:
+          periodSeconds: 10
+          exec:
+            command: ["/bin/grcp_health_probe","-addr:7070"]
+        readinessProbe:
+          periodSeconds: 5
+          exec:
+            command: [/bin/grcp_health_probe","-addr:7070"]
 ---
 
 apiVersion: v1
@@ -392,6 +483,7 @@ kind: Deployment
 metadata:
   name: redis-cart
 spec:
+  replicas: 2
   selector:
     matchLabels:
       app: redis-cart
@@ -406,15 +498,26 @@ spec:
         resources:
           limits:
             memory: "128Mi"
-            cpu: "500m"
+            cpu: "170m"
         ports:
         - containerPort: 6379
+        livenessProbe:
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          tcpSocket:
+            port: 6379
+        readinessProbe:
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          tcpSocket: 
+            port: 6379
         volumeMounts:
         - name: redis-data
           mountPath: /data
       volumes:
         - name: redis-data
           emptyDir: {}
+        
 
 ---
 
@@ -437,6 +540,7 @@ kind: Deployment
 metadata:
   name: frontend
 spec:
+  replicas: 2
   selector:
     matchLabels:
       app: frontend
@@ -471,6 +575,14 @@ spec:
             value: "adservice:9555"
           - name: CHECKOUT_SERVICE_ADDR
             value: "checkoutservice:5050"
+        livenessProbe:
+          periodSeconds: 10
+          exec:
+            command: ["/bin/grcp_health_probe","-addr:8080"]
+        readinessProbe:
+          periodSeconds: 5
+          exec:
+            command: [/bin/grcp_health_probe","-addr:8080"]
           
 
 ---
