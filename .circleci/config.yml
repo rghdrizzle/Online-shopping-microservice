@@ -6,7 +6,7 @@ jobs:
     steps:
       - checkout
       - run:
-          command: "builidng pipeline...."
+          command: echo "builidng pipeline...."
 workflows:
   message-workflow:
     jobs:
